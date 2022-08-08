@@ -1,0 +1,21 @@
+[package]
+name = "esochatextract"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+walkdir = "2"
+lazy_static = "1"
+color-eyre = "0"
+tracing = "0"
+tracing-subscriber = "0"
+rayon = "1"
+egui = "0"
+chrono = { version = "0", features = ["serde"] }
+regex = "1"
+dirs = "4"
+crossbeam-skiplist = { git = "https://github.com/crossbeam-rs/crossbeam"}
+encoding = "0"
+palette = "0"
