@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use std::{collections::BTreeSet};
 use std::path::PathBuf;
 use std::fs;
 use chrono::{DateTime, FixedOffset, ParseError};
@@ -16,7 +16,7 @@ lazy_static! {
     pub static ref DEFAULT_LOG_DIR: PathBuf = [home_dir().expect("Can't find your home directory!").to_str().unwrap(), "Documents", "Elder Scrolls Online", "live", "Logs"].iter().collect();
 }
 
-#[derive(PartialEq, Eq, Hash, Debug)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone)]
 pub struct Logentry {
     pub stamp: DateTime<FixedOffset>,
     pub channel_id: i32,
@@ -24,9 +24,9 @@ pub struct Logentry {
     pub message: String
 }
 
-pub type Elt = (DateTime<FixedOffset>, Logentry);
+pub type Logfiles = Vec<Logentry>;
 
-pub fn parse(input: &str) -> Result<SkipMap<DateTime<FixedOffset>, Logentry>, ParseError> {
+pub fn parse(input: &str) -> Result<Logfiles, ParseError> {
     trace!("Starting parse for {}", input);
     let retval = SkipMap::new();
     LOGFILE_RX.captures_iter(input).par_bridge().for_each(|cap| {
@@ -44,11 +44,13 @@ pub fn parse(input: &str) -> Result<SkipMap<DateTime<FixedOffset>, Logentry>, Pa
             Err(e) => trace!("{}", e),
         }
     }); 
-        
-    return Result::Ok(retval);
+    
+    let mut rretval: Logfiles = Vec::new();
+    retval.into_iter().for_each(|x| {rretval.push(x.1);});
+    return Result::Ok(rretval);
 }
 
-pub fn parse_all(a: &mut dyn Iterator<Item = PathBuf>) -> Result<SkipMap<DateTime<FixedOffset>, Logentry>, ParseError> {  
+pub fn parse_all(a: &mut dyn Iterator<Item = PathBuf>) -> Result<Logfiles, ParseError> {  
     let mut buf = String::from("");
     for fil in a.into_iter() {
         let m = fs::read(&fil);

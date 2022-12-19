@@ -19,3 +19,6 @@ dirs = "4"
 crossbeam-skiplist = { git = "https://github.com/crossbeam-rs/crossbeam"}
 encoding = "0"
 palette = "0"
+surrealdb = "1.0.0-beta.8"
+surrealdb-derive = "0"
+futures = "0"
